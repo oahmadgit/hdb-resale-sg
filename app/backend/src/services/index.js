@@ -1,20 +1,13 @@
 const { createCache } = require('../utils/cache');
-const { createHttpClient } = require('../utils/httpClient');
+const { createDatasetService } = require('./dataset.service');
 const { createResaleService } = require('./resale.service');
 const { createAffordabilityService } = require('./affordability.service');
 
 function createServices(config) {
   const cache = createCache({ ttlSeconds: config.CACHE_TTL_SECONDS });
-  const httpClient = createHttpClient({ timeoutMs: config.REQUEST_TIMEOUT_MS });
+  const datasetService = createDatasetService({ dataDir: config.DATA_DIR });
 
-  const resaleService = createResaleService({
-    httpClient,
-    cache,
-    resourceId: config.DATA_GOV_RESOURCE_ID,
-    maxConcurrentFetches: config.MAX_CONCURRENT_FETCHES,
-    maxRecords: config.MAX_RECORDS_PER_QUERY,
-  });
-
+  const resaleService = createResaleService({ datasetService, cache });
   const affordabilityService = createAffordabilityService({ resaleService });
 
   return { resaleService, affordabilityService };

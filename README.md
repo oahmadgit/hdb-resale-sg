@@ -1,8 +1,8 @@
 # HDB Resale Flat Price SG
 
 A full-stack app for exploring HDB resale flat prices in Singapore, built on
-the [data.gov.sg Resale Flat Prices](https://data.gov.sg/collections/189/view) dataset. A single page combines two
-tools around a shared town selection:
+the [data.gov.sg Resale Flat Prices](https://data.gov.sg/collections/189/view) dataset, distributed as a set of CSV
+snapshots under `/data`. A single page combines two tools around a shared town selection:
 
 1. **Affordability Calculator** — enter household income, savings, town
    preference, and flat type; get a live affordability verdict, mortgage
@@ -14,13 +14,13 @@ tools around a shared town selection:
    in the calculator, so both tools stay in sync without re-entering data.
 
 ```
-[data.gov.sg API] → API (app/backend) → cache → Client (app/frontend)
+CSV snapshots (/data) → API (app/backend, loaded into memory) → cache → Client (app/frontend)
 ```
 
 ## Stack
 
-- **Backend**: Node.js + Express, `axios` (data.gov.sg fetching), `node-cache`
-  (in-memory TTL cache), `zod` (validation), `pino`/`pino-http` (logging)
+- **Backend**: Node.js + Express, in-memory CSV dataset loader, `node-cache`
+  (query-result cache), `zod` (validation), `pino`/`pino-http` (logging)
 - **Frontend**: React + Vite, React Router, TanStack Query (data
   fetching/caching), Tailwind CSS, Recharts, `react-hook-form` + `zod`,
   `@hookform/resolvers`
@@ -46,9 +46,9 @@ hdb-resale-sg/
 │   │   │   ├── config/       # env var validation + defaults
 │   │   │   ├── routes/       # Express routers
 │   │   │   ├── controllers/  # thin request/response handlers
-│   │   │   ├── services/     # business logic (data.gov.sg fetch, affordability, aggregation)
+│   │   │   ├── services/     # business logic (CSV dataset loading, affordability, aggregation)
 │   │   │   ├── middleware/   # error handler, request logger, validation
-│   │   │   └── utils/        # cache singleton, http client, math helpers
+│   │   │   └── utils/        # cache singleton, CSV parser, math helpers
 │   │   └── tests/
 │   │       ├── unit/
 │   │       └── integration/
@@ -69,6 +69,8 @@ hdb-resale-sg/
 │       └── tests/
 │           ├── components/
 │           └── utils/
+│
+├── data/                   # HDB resale flat price CSV snapshots (data.gov.sg exports)
 │
 └── infra/                  # Terraform IaC
     ├── main.tf
@@ -105,7 +107,8 @@ never touch `req`/`res` directly, which keeps them easy to unit test.
    cp .env.example app/backend/.env
    ```
 
-   No API keys are required — the data.gov.sg API is public.
+   No API keys are required — the backend reads resale price data from the CSV
+   snapshots already checked into `/data`.
 
 3. **Start both services:**
 
@@ -125,24 +128,21 @@ CORS setup needed locally.
 |---|---|---|
 | `PORT` | `4000` | Express server port |
 | `NODE_ENV` | `development` | Environment — controls logging verbosity |
-| `DATA_GOV_RESOURCE_ID` | *(set in `.env.example`)* | data.gov.sg dataset resource ID for resale flat prices |
-| `CACHE_TTL_SECONDS` | `3600` | In-memory cache TTL |
-| `REQUEST_TIMEOUT_MS` | `10000` | Timeout for data.gov.sg API calls |
-| `MAX_CONCURRENT_FETCHES` | `3` | Max parallel pages fetched from data.gov.sg per batch |
-| `MAX_RECORDS_PER_QUERY` | `1000` | Cap on records fetched per unique filter combination (see note below) |
+| `DATA_DIR` | `/data` at the repo root | Directory of CSV files to load resale records from |
+| `CACHE_TTL_SECONDS` | `3600` | TTL for cached per-filter query results |
 | `CORS_ORIGIN` | `http://localhost:3000` | Allowed CORS origin |
 | `LOG_LEVEL` | `info` | pino log level |
 
-**Note on data.gov.sg rate limiting**: the public API enforces a strict rate
-limit (observed: a handful of requests before a `429`, clearing after
-20-30+ seconds). The resale data service retries 429s with exponential
-backoff, throttles between fetch batches, and caps how many records it
-pulls per unique filter combination (`MAX_RECORDS_PER_QUERY`) rather than
-fetching an entire town's full history up front — this keeps requests fast
-and reliable at the cost of results being a bounded recent sample instead
-of the complete dataset for very large towns/flat-type combinations.
-Results are cached for `CACHE_TTL_SECONDS`, so this cost is paid once per
-filter combination, not per request.
+**Note on the CSV dataset**: on startup, the backend reads every `.csv` file in
+`DATA_DIR` into memory once (a few hundred thousand records across the
+bundled snapshots) and serves all `/api/affordability` and `/api/trends`
+requests by filtering that in-memory set — no network calls, no rate limits.
+Each unique filter combination's result is still cached for
+`CACHE_TTL_SECONDS` to avoid re-scanning the full dataset on repeated
+requests. To refresh the data, replace or add CSV files in `/data` (same
+columns: `month, town, flat_type, block, street_name, storey_range,
+floor_area_sqm, flat_model, lease_commence_date, resale_price`, with an
+optional `remaining_lease` column) and restart the server.
 
 ## Running tests
 
