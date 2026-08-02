@@ -1,18 +1,18 @@
 const VERDICT_CONFIG = {
   affordable: {
-    tone: 'bg-green-50 text-green-800 ring-1 ring-inset ring-green-200',
+    tone: 'bg-green-50 text-green-800 ring-1 ring-inset ring-green-200 dark:bg-green-950/50 dark:text-green-400 dark:ring-green-900',
     icon: '🎉',
     label: 'Affordable',
     message: "You're in great shape — this home fits comfortably within your budget.",
   },
   borderline: {
-    tone: 'bg-amber-50 text-amber-800 ring-1 ring-inset ring-amber-200',
+    tone: 'bg-amber-50 text-amber-800 ring-1 ring-inset ring-amber-200 dark:bg-amber-950/50 dark:text-amber-400 dark:ring-amber-900',
     icon: '⚖️',
     label: 'Borderline',
     message: "It's a stretch, but within reach — a bit more savings would ease the squeeze.",
   },
   unaffordable: {
-    tone: 'bg-red-50 text-red-800 ring-1 ring-inset ring-red-200',
+    tone: 'bg-red-50 text-red-800 ring-1 ring-inset ring-red-200 dark:bg-red-950/50 dark:text-red-400 dark:ring-red-900',
     icon: '⚠️',
     label: 'Unaffordable',
     message: 'This one may be out of reach for now — consider a smaller flat type or a different town.',
@@ -21,7 +21,7 @@ const VERDICT_CONFIG = {
 
 function VerdictBadge({ verdict }) {
   const config = VERDICT_CONFIG[verdict] ?? {
-    tone: 'bg-slate-100 text-slate-700 ring-1 ring-inset ring-slate-200',
+    tone: 'bg-slate-100 text-slate-700 ring-1 ring-inset ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700',
     icon: 'ℹ️',
     label: verdict,
     message: '',

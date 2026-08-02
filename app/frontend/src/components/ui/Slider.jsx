@@ -9,10 +9,10 @@ const Slider = forwardRef(function Slider(
   return (
     <div className="flex flex-col gap-2">
       <div className="flex justify-between text-sm">
-        <label htmlFor={sliderId} className="font-semibold text-slate-700">
+        <label htmlFor={sliderId} className="font-semibold text-slate-700 dark:text-slate-300">
           {label}
         </label>
-        <span className="font-semibold text-brand-600">
+        <span className="font-semibold text-brand-600 dark:text-brand-400">
           {formatValue ? formatValue(value) : value}
         </span>
       </div>
@@ -25,7 +25,7 @@ const Slider = forwardRef(function Slider(
         step={step}
         value={value}
         onChange={onChange}
-        className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-slate-200 accent-brand-600"
+        className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-slate-200 accent-brand-600 dark:bg-slate-700"
         {...props}
       />
     </div>

@@ -18,7 +18,7 @@ function YearRangeSelect({ years, fromYear, toYear, onChange }) {
   }
 
   const selectClass =
-    'rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-semibold text-slate-700 shadow-sm transition-colors focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100';
+    'rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-semibold text-slate-700 shadow-sm transition-colors focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200';
 
   return (
     <div className="flex items-center gap-1.5">
@@ -34,7 +34,7 @@ function YearRangeSelect({ years, fromYear, toYear, onChange }) {
           </option>
         ))}
       </select>
-      <span className="text-xs text-slate-400">–</span>
+      <span className="text-xs text-slate-400 dark:text-slate-500">–</span>
       <select aria-label="To year" className={selectClass} value={toYear} onChange={handleToChange}>
         {years.map((year) => (
           <option key={year} value={year}>

@@ -25,7 +25,7 @@ function PropertyExplorerPage() {
   const hasTowns = selectedTowns.length > 0;
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       <Header townSelect={<TownSelect value={selectedTowns} onChange={setSelectedTowns} />} />
 
       <section className="bg-gradient-to-br from-brand-600 via-brand-600 to-brand-700 px-6 py-10 text-white">
@@ -44,7 +44,9 @@ function PropertyExplorerPage() {
         <section id="calculator" className="scroll-mt-20">
           <Card className="mb-6">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm font-semibold text-slate-700">Showing trends for:</span>
+              <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                Showing trends for:
+              </span>
               {hasTowns ? (
                 selectedTowns.map((town) => (
                   <Badge key={town} tone="neutral">
@@ -52,13 +54,15 @@ function PropertyExplorerPage() {
                   </Badge>
                 ))
               ) : (
-                <span className="text-sm text-slate-400">Select a town above to see trends.</span>
+                <span className="text-sm text-slate-400 dark:text-slate-500">
+                  Select a town above to see trends.
+                </span>
               )}
             </div>
           </Card>
 
           {hasTowns && trends.isError && (
-            <p className="mb-6 rounded-xl bg-red-50 p-4 text-sm font-medium text-red-700">
+            <p className="mb-6 rounded-xl bg-red-50 p-4 text-sm font-medium text-red-700 dark:bg-red-950/50 dark:text-red-400">
               Something went wrong loading trends. Please try again.
             </p>
           )}
@@ -85,7 +89,7 @@ function PropertyExplorerPage() {
           </Card>
 
           {affordability.isError && (
-            <p className="mb-6 rounded-xl bg-red-50 p-4 text-sm font-medium text-red-700">
+            <p className="mb-6 rounded-xl bg-red-50 p-4 text-sm font-medium text-red-700 dark:bg-red-950/50 dark:text-red-400">
               Something went wrong calculating affordability. Please try again.
             </p>
           )}
@@ -118,7 +122,7 @@ function PropertyExplorerPage() {
           ) : (
             !affordability.isError && (
               <Card className="flex items-center justify-center py-16 text-center">
-                <p className="text-slate-400">
+                <p className="text-slate-400 dark:text-slate-500">
                   Fill in the filters above and hit <span className="font-semibold">Calculate</span>{' '}
                   to see your affordability breakdown here.
                 </p>

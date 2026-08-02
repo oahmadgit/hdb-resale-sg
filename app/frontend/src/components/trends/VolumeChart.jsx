@@ -30,7 +30,7 @@ function VolumeChart({ series }) {
   if (series.length === 0) {
     return (
       <Card className="flex h-full items-center justify-center">
-        <p className="text-sm text-slate-500">No data to display.</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">No data to display.</p>
       </Card>
     );
   }
@@ -43,7 +43,9 @@ function VolumeChart({ series }) {
   if (chartData.length === 0) {
     return (
       <Card className="flex h-full items-center justify-center">
-        <p className="text-sm text-slate-500">No data in the selected year range.</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">
+          No data in the selected year range.
+        </p>
       </Card>
     );
   }
@@ -55,21 +57,21 @@ function VolumeChart({ series }) {
   return (
     <Card className="flex h-full flex-col">
       <div className="mb-2 flex items-center justify-between gap-3">
-        <h3 className="font-semibold text-slate-900">Transaction volume</h3>
+        <h3 className="font-semibold text-slate-900 dark:text-slate-50">Transaction volume</h3>
         <YearRangeSelect years={years} fromYear={fromYear} toYear={toYear} onChange={setYearRange} />
       </div>
       <div className="mb-2 flex items-baseline justify-between">
         <span />
-        <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+        <span className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
           {total.toLocaleString()} total
         </span>
       </div>
 
       <div className="mb-2 flex items-baseline gap-2">
-        <span className="text-2xl font-extrabold text-slate-900">
+        <span className="text-2xl font-extrabold text-slate-900 dark:text-slate-50">
           {active.count.toLocaleString()}
         </span>
-        <span className="text-sm text-slate-500">{formatMonth(active.month)}</span>
+        <span className="text-sm text-slate-500 dark:text-slate-400">{formatMonth(active.month)}</span>
       </div>
 
       <div
@@ -91,7 +93,9 @@ function VolumeChart({ series }) {
             >
               <div
                 className={`w-full rounded-t transition-colors ${
-                  isActive ? 'bg-brand-600' : 'bg-slate-200 group-hover:bg-brand-300'
+                  isActive
+                    ? 'bg-brand-600'
+                    : 'bg-slate-200 group-hover:bg-brand-300 dark:bg-slate-700 dark:group-hover:bg-brand-700'
                 }`}
                 style={{ height: `${heightPct}%`, minHeight: '2px' }}
               />
@@ -100,7 +104,7 @@ function VolumeChart({ series }) {
         })}
       </div>
 
-      <div className="mt-1.5 flex justify-between text-xs text-slate-400">
+      <div className="mt-1.5 flex justify-between text-xs text-slate-400 dark:text-slate-500">
         <span>{formatMonth(chartData[0].month)}</span>
         <span>{formatMonth(chartData[chartData.length - 1].month)}</span>
       </div>

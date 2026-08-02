@@ -18,8 +18,8 @@ const SAVINGS_OPTIONS = [0, 10000, 25000, 50000, 75000, 100000, 150000, 200000, 
 const TENURE_OPTIONS = [5, 10, 15, 20, 25, 30];
 
 const fieldClass =
-  'w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm text-slate-800 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100';
-const labelClass = 'text-xs font-semibold text-slate-500';
+  'w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm text-slate-800 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100';
+const labelClass = 'text-xs font-semibold text-slate-500 dark:text-slate-400';
 
 function currencyLabel(value) {
   return `$${value.toLocaleString()}`;
@@ -140,16 +140,16 @@ function FilterNav({ onSubmit, isPending = false, selectedTowns = [] }) {
           />
         </div>
 
-        <Button type="submit" disabled={isPending} className="h-9 w-full">
+        <Button type="submit" isLoading={isPending} className="h-9 w-full">
           {isPending ? 'Calculating…' : 'Calculate'}
         </Button>
       </div>
 
       {attemptedWithoutTowns && (
-        <p className="text-xs font-medium text-red-600">Select at least one town</p>
+        <p className="text-xs font-medium text-red-600 dark:text-red-400">Select at least one town</p>
       )}
       {errors.flatType && (
-        <p className="text-xs font-medium text-red-600">{errors.flatType.message}</p>
+        <p className="text-xs font-medium text-red-600 dark:text-red-400">{errors.flatType.message}</p>
       )}
     </form>
   );
