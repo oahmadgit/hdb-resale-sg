@@ -1,29 +1,29 @@
 # HDB Resale Flat Price SG
 
 A full-stack app for exploring HDB resale flat prices in Singapore, built on
-the [data.gov.sg Resale Flat Prices](https://data.gov.sg/collections/189/view) dataset. Two features:
+the [data.gov.sg Resale Flat Prices](https://data.gov.sg/collections/189/view) dataset. A single page combines two
+tools around a shared town selection:
 
 1. **Affordability Calculator** — enter household income, savings, town
    preference, and flat type; get a live affordability verdict, mortgage
    breakdown, HDB grant eligibility estimate, and comparable recent
    transactions.
 2. **Market Trend Dashboard** — median resale price trends over time,
-   filterable by town, flat type, storey range, and date range, with KPI
-   summary cards and transaction volume context.
+   filterable by flat type, storey range, and date range, with KPI summary
+   cards and transaction volume context. Follows the same town(s) selected
+   in the calculator, so both tools stay in sync without re-entering data.
 
 ```
 [data.gov.sg API] → API (app/backend) → cache → Client (app/frontend)
 ```
-
-See [HDB_Resale_Technical_Design_Document.pdf](./HDB_Resale_Technical_Design_Document.pdf)
-for the full design rationale, API contracts, data flow, and trade-offs.
 
 ## Stack
 
 - **Backend**: Node.js + Express, `axios` (data.gov.sg fetching), `node-cache`
   (in-memory TTL cache), `zod` (validation), `pino`/`pino-http` (logging)
 - **Frontend**: React + Vite, React Router, TanStack Query (data
-  fetching/caching), Tailwind CSS, Recharts, `react-hook-form` + `zod`
+  fetching/caching), Tailwind CSS, Recharts, `react-hook-form` + `zod`,
+  `@hookform/resolvers`
 - **Infrastructure**: Terraform (AWS) — S3 + CloudFront for the frontend,
   ECS Fargate + ALB + ECR for the API
 - **Tests**: Jest + Supertest (backend), Vitest + React Testing Library
@@ -57,13 +57,14 @@ hdb-resale-sg/
 │       ├── package.json
 │       ├── src/
 │       │   ├── api/          # API client functions
-│       │   ├── pages/        # AffordabilityPage, TrendsPage
+│       │   ├── pages/        # PropertyExplorerPage (single-page app), NotFoundPage
 │       │   ├── components/
-│       │   │   ├── ui/           # generic UI atoms
+│       │   │   ├── ui/           # generic UI atoms (Button, Card, Select, Slider, Badge)
+│       │   │   ├── layout/        # Header
 │       │   │   ├── affordability/
 │       │   │   └── trends/
 │       │   ├── hooks/        # useAffordability, useTrends
-│       │   ├── constants/    # towns, flat types
+│       │   ├── constants/    # towns, flat types, storey ranges
 │       │   └── utils/        # formatters
 │       └── tests/
 │           ├── components/
@@ -127,9 +128,21 @@ CORS setup needed locally.
 | `DATA_GOV_RESOURCE_ID` | *(set in `.env.example`)* | data.gov.sg dataset resource ID for resale flat prices |
 | `CACHE_TTL_SECONDS` | `3600` | In-memory cache TTL |
 | `REQUEST_TIMEOUT_MS` | `10000` | Timeout for data.gov.sg API calls |
-| `MAX_CONCURRENT_FETCHES` | `5` | Max parallel pages fetched from data.gov.sg |
+| `MAX_CONCURRENT_FETCHES` | `3` | Max parallel pages fetched from data.gov.sg per batch |
+| `MAX_RECORDS_PER_QUERY` | `1000` | Cap on records fetched per unique filter combination (see note below) |
 | `CORS_ORIGIN` | `http://localhost:3000` | Allowed CORS origin |
 | `LOG_LEVEL` | `info` | pino log level |
+
+**Note on data.gov.sg rate limiting**: the public API enforces a strict rate
+limit (observed: a handful of requests before a `429`, clearing after
+20-30+ seconds). The resale data service retries 429s with exponential
+backoff, throttles between fetch batches, and caps how many records it
+pulls per unique filter combination (`MAX_RECORDS_PER_QUERY`) rather than
+fetching an entire town's full history up front — this keeps requests fast
+and reliable at the cost of results being a bounded recent sample instead
+of the complete dataset for very large towns/flat-type combinations.
+Results are cached for `CACHE_TTL_SECONDS`, so this cost is paid once per
+filter combination, not per request.
 
 ## Running tests
 
@@ -151,8 +164,8 @@ All endpoints are mounted under `/api`.
 | Endpoint | Description |
 |---|---|
 | `GET /api/health` | Service status — used as the ALB health check in production |
-| `GET /api/affordability` | Affordability verdict, mortgage breakdown, grant eligibility, and comparable transactions. Query params: `income`, `savings`, `towns` (comma-separated), `flatType` (required); `tenure`, `rate` (optional) |
-| `GET /api/trends` | Median price trend series and KPI summary. Query params: `towns`, `flatType`, `from`, `to`, `storeyRange` (all optional) |
+| `GET /api/affordability` | Affordability verdict, mortgage breakdown, grant eligibility, and comparable transactions. Query params: `income`, `savings`, `towns` (comma-separated), `flatType` (required); `tenure`, `rate` (optional). `savings` above the 20% minimum downpayment reduces the loan amount. |
+| `GET /api/trends` | Median price trend series and KPI summary. Query params: `towns`, `flatType`, `from`, `to`, `storeyRange` (all optional, `from`/`to` in `YYYY-MM` format) |
 
 All errors return a consistent shape: `{ "error": { "message": "...", "code": "INVALID_PARAMS" | "UPSTREAM_ERROR" | "INTERNAL_ERROR" } }`.
 
