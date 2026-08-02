@@ -14,7 +14,7 @@ describe('KpiCards', () => {
   it('renders four cards with correct labels', () => {
     render(<KpiCards kpis={kpis} />);
 
-    expect(screen.getByText(/current median/i)).toBeInTheDocument();
+    expect(screen.getByText(/average price/i)).toBeInTheDocument();
     expect(screen.getByText(/month-on-month/i)).toBeInTheDocument();
     expect(screen.getByText(/year-on-year/i)).toBeInTheDocument();
     expect(screen.getByText(/transactions/i)).toBeInTheDocument();

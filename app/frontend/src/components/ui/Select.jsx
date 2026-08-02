@@ -3,14 +3,14 @@ function Select({ label, value, onChange, options, id, ...props }) {
 
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={selectId} className="text-sm font-semibold text-slate-700">
+      <label htmlFor={selectId} className="text-sm font-semibold text-slate-700 dark:text-slate-300">
         {label}
       </label>
       <select
         id={selectId}
         value={value}
         onChange={onChange}
-        className="rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 shadow-sm transition-colors focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100"
+        className="rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 shadow-sm transition-colors focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
         {...props}
       >
         {options.map((option) => (

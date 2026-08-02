@@ -6,6 +6,7 @@ coverage/
 *.local
 .DS_Store
 npm-debug.log*
+package-lock.json
 
 # Terraform
 infra/.terraform/

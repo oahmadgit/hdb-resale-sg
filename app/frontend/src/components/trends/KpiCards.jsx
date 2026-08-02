@@ -2,14 +2,17 @@ import Card from '../ui/Card';
 import { formatCurrency, formatPercent } from '../../utils/formatters';
 
 function changeClass(value) {
-  if (value === null || value === undefined) return 'text-slate-400';
-  return value >= 0 ? 'text-green-700' : 'text-red-700';
+  if (value === null || value === undefined) return 'text-slate-400 dark:text-slate-500';
+  return value >= 0 ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400';
 }
 
 function SkeletonCard() {
   return (
     <Card>
-      <div data-testid="kpi-skeleton" className="h-16 animate-pulse rounded-lg bg-slate-100" />
+      <div
+        data-testid="kpi-skeleton"
+        className="h-16 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-800"
+      />
     </Card>
   );
 }
@@ -30,15 +33,15 @@ function KpiCards({ kpis, isLoading = false }) {
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
       <Card>
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
           Average price
         </p>
-        <p className="mt-1 text-2xl font-extrabold text-slate-900">
+        <p className="mt-1 text-2xl font-extrabold text-slate-900 dark:text-slate-50">
           {formatCurrency(currentMedian)}
         </p>
       </Card>
       <Card>
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
           Month-on-month
         </p>
         <p
@@ -49,7 +52,7 @@ function KpiCards({ kpis, isLoading = false }) {
         </p>
       </Card>
       <Card>
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
           Year-on-year
         </p>
         <p
@@ -60,10 +63,10 @@ function KpiCards({ kpis, isLoading = false }) {
         </p>
       </Card>
       <Card>
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
           Overall Transactions
         </p>
-        <p className="mt-1 text-2xl font-extrabold text-slate-900">
+        <p className="mt-1 text-2xl font-extrabold text-slate-900 dark:text-slate-50">
           {(totalTransactions ?? 0).toLocaleString()}
         </p>
       </Card>

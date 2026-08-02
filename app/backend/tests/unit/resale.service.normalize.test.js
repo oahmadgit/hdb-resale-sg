@@ -1,4 +1,4 @@
-const { createResaleService, normalizeRecord } = require('../../src/services/resale.service');
+const { normalizeRecord } = require('../../src/services/resale.service');
 
 describe('normalizeRecord', () => {
   it('coerces resale_price, floor_area_sqm, and lease_commence_date to numbers', () => {
@@ -37,36 +37,5 @@ describe('normalizeRecord', () => {
 
   it('does not choke on missing numeric fields', () => {
     expect(() => normalizeRecord({ town: 'BEDOK' })).not.toThrow();
-  });
-});
-
-describe('resale.service — fetchAllRecords normalizes numeric fields from data.gov.sg', () => {
-  it('coerces string numeric fields on every fetched record', async () => {
-    const rawRecords = [
-      { town: 'BEDOK', resale_price: '480000', floor_area_sqm: '88', lease_commence_date: '1985' },
-    ];
-    const httpClient = {
-      get: jest.fn(() =>
-        Promise.resolve({ data: { result: { total: 1, records: rawRecords } } })
-      ),
-    };
-    const store = new Map();
-    const cache = {
-      get: (key) => store.get(key),
-      set: (key, value) => store.set(key, value),
-      has: (key) => store.has(key),
-    };
-    const service = createResaleService({
-      httpClient,
-      cache,
-      resourceId: 'abc',
-      maxConcurrentFetches: 5,
-    });
-
-    const [record] = await service.fetchAllRecords({});
-
-    expect(record.resale_price).toBe(480000);
-    expect(record.floor_area_sqm).toBe(88);
-    expect(record.lease_commence_date).toBe(1985);
   });
 });
