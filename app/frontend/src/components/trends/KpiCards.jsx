@@ -2,14 +2,14 @@ import Card from '../ui/Card';
 import { formatCurrency, formatPercent } from '../../utils/formatters';
 
 function changeClass(value) {
-  if (value === null || value === undefined) return 'text-slate-500';
+  if (value === null || value === undefined) return 'text-slate-400';
   return value >= 0 ? 'text-green-700' : 'text-red-700';
 }
 
 function SkeletonCard() {
   return (
     <Card>
-      <div data-testid="kpi-skeleton" className="h-16 animate-pulse rounded bg-slate-100" />
+      <div data-testid="kpi-skeleton" className="h-16 animate-pulse rounded-lg bg-slate-100" />
     </Card>
   );
 }
@@ -30,25 +30,41 @@ function KpiCards({ kpis, isLoading = false }) {
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
       <Card>
-        <p className="text-sm text-slate-500">Current median</p>
-        <p className="text-xl font-semibold text-slate-900">{formatCurrency(currentMedian)}</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+          Average price
+        </p>
+        <p className="mt-1 text-2xl font-extrabold text-slate-900">
+          {formatCurrency(currentMedian)}
+        </p>
       </Card>
       <Card>
-        <p className="text-sm text-slate-500">Month-on-month change</p>
-        <p data-testid="kpi-mom-change" className={`text-xl font-semibold ${changeClass(momChange)}`}>
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+          Month-on-month
+        </p>
+        <p
+          data-testid="kpi-mom-change"
+          className={`mt-1 text-2xl font-extrabold ${changeClass(momChange)}`}
+        >
           {formatPercent(momChange)}
         </p>
       </Card>
       <Card>
-        <p className="text-sm text-slate-500">Year-on-year change</p>
-        <p data-testid="kpi-yoy-change" className={`text-xl font-semibold ${changeClass(yoyChange)}`}>
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+          Year-on-year
+        </p>
+        <p
+          data-testid="kpi-yoy-change"
+          className={`mt-1 text-2xl font-extrabold ${changeClass(yoyChange)}`}
+        >
           {formatPercent(yoyChange)}
         </p>
       </Card>
       <Card>
-        <p className="text-sm text-slate-500">Transactions</p>
-        <p className="text-xl font-semibold text-slate-900">
-          {totalTransactions.toLocaleString()}
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+          Overall Transactions
+        </p>
+        <p className="mt-1 text-2xl font-extrabold text-slate-900">
+          {(totalTransactions ?? 0).toLocaleString()}
         </p>
       </Card>
     </div>

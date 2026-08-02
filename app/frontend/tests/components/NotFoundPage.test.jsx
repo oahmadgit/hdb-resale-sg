@@ -15,9 +15,9 @@ describe('NotFoundPage', () => {
     expect(screen.getByText(/page not found/i)).toBeInTheDocument();
   });
 
-  it('renders a link back to the affordability calculator', () => {
+  it('renders a link back to the home page', () => {
     renderWithRouter(<NotFoundPage />);
-    const link = screen.getByRole('link', { name: /affordability/i });
-    expect(link).toHaveAttribute('href', '/affordability');
+    const link = screen.getByRole('link', { name: /back to hdb resale explorer/i });
+    expect(link).toHaveAttribute('href', '/');
   });
 });

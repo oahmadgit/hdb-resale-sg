@@ -7,10 +7,14 @@ const Slider = forwardRef(function Slider(
   const sliderId = id ?? label.toLowerCase().replace(/\s+/g, '-');
 
   return (
-    <div className="flex flex-col gap-1">
-      <div className="flex justify-between text-sm font-medium text-slate-700">
-        <label htmlFor={sliderId}>{label}</label>
-        <span>{formatValue ? formatValue(value) : value}</span>
+    <div className="flex flex-col gap-2">
+      <div className="flex justify-between text-sm">
+        <label htmlFor={sliderId} className="font-semibold text-slate-700">
+          {label}
+        </label>
+        <span className="font-semibold text-brand-600">
+          {formatValue ? formatValue(value) : value}
+        </span>
       </div>
       <input
         ref={ref}
@@ -21,7 +25,7 @@ const Slider = forwardRef(function Slider(
         step={step}
         value={value}
         onChange={onChange}
-        className="w-full accent-blue-600"
+        className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-slate-200 accent-brand-600"
         {...props}
       />
     </div>

@@ -18,18 +18,12 @@ describe('fetchTrends', () => {
     const result = await fetchTrends({
       towns: ['TAMPINES'],
       flatType: '4 ROOM',
-      from: '2020-01',
-      to: '2024-01',
-      storeyRange: '07 TO 09',
     });
 
     expect(apiClient.get).toHaveBeenCalledWith('/trends', {
       params: {
         towns: 'TAMPINES',
         flatType: '4 ROOM',
-        from: '2020-01',
-        to: '2024-01',
-        storeyRange: '07 TO 09',
       },
     });
     expect(result).toEqual(responseData);

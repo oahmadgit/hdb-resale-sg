@@ -48,4 +48,9 @@ describe('KpiCards', () => {
     expect(screen.getByTestId('kpi-mom-change')).toHaveTextContent('—');
     expect(screen.getByTestId('kpi-yoy-change')).toHaveTextContent('—');
   });
+
+  it('does not crash when kpis is an incomplete/empty object', () => {
+    render(<KpiCards kpis={{}} />);
+    expect(screen.getByText(/transactions/i)).toBeInTheDocument();
+  });
 });

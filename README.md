@@ -1,15 +1,17 @@
 # HDB Resale Flat Price SG
 
 A full-stack app for exploring HDB resale flat prices in Singapore, built on
-the [data.gov.sg Resale Flat Prices](https://data.gov.sg/collections/189/view) dataset. Two features:
+the [data.gov.sg Resale Flat Prices](https://data.gov.sg/collections/189/view) dataset. A single page combines two
+tools around a shared town selection:
 
 1. **Affordability Calculator** — enter household income, savings, town
    preference, and flat type; get a live affordability verdict, mortgage
    breakdown, HDB grant eligibility estimate, and comparable recent
    transactions.
 2. **Market Trend Dashboard** — median resale price trends over time,
-   filterable by town, flat type, storey range, and date range, with KPI
-   summary cards and transaction volume context.
+   filterable by flat type, storey range, and date range, with KPI summary
+   cards and transaction volume context. Follows the same town(s) selected
+   in the calculator, so both tools stay in sync without re-entering data.
 
 ```
 [data.gov.sg API] → API (app/backend) → cache → Client (app/frontend)
@@ -20,7 +22,8 @@ the [data.gov.sg Resale Flat Prices](https://data.gov.sg/collections/189/view) d
 - **Backend**: Node.js + Express, `axios` (data.gov.sg fetching), `node-cache`
   (in-memory TTL cache), `zod` (validation), `pino`/`pino-http` (logging)
 - **Frontend**: React + Vite, React Router, TanStack Query (data
-  fetching/caching), Tailwind CSS, Recharts, `react-hook-form` + `zod`
+  fetching/caching), Tailwind CSS, Recharts, `react-hook-form` + `zod`,
+  `@hookform/resolvers`
 - **Infrastructure**: Terraform (AWS) — S3 + CloudFront for the frontend,
   ECS Fargate + ALB + ECR for the API
 - **Tests**: Jest + Supertest (backend), Vitest + React Testing Library
@@ -54,13 +57,14 @@ hdb-resale-sg/
 │       ├── package.json
 │       ├── src/
 │       │   ├── api/          # API client functions
-│       │   ├── pages/        # AffordabilityPage, TrendsPage
+│       │   ├── pages/        # PropertyExplorerPage (single-page app), NotFoundPage
 │       │   ├── components/
-│       │   │   ├── ui/           # generic UI atoms
+│       │   │   ├── ui/           # generic UI atoms (Button, Card, Select, Slider, Badge)
+│       │   │   ├── layout/        # Header
 │       │   │   ├── affordability/
 │       │   │   └── trends/
 │       │   ├── hooks/        # useAffordability, useTrends
-│       │   ├── constants/    # towns, flat types
+│       │   ├── constants/    # towns, flat types, storey ranges
 │       │   └── utils/        # formatters
 │       └── tests/
 │           ├── components/

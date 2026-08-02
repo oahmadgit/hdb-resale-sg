@@ -42,7 +42,7 @@ function PriceTrendChart({ series }) {
 
   return (
     <Card>
-      <h3 className="mb-2 font-semibold text-slate-900">Median price trend</h3>
+      <h3 className="mb-2 font-semibold text-slate-900">Average Price over time</h3>
       <ResponsiveContainer width="100%" height={320}>
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" />
