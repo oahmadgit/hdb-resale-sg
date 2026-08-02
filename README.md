@@ -172,5 +172,7 @@ All errors return a consistent shape: `{ "error": { "message": "...", "code": "I
 ## Infrastructure
 
 Terraform under `infra/` provisions the AWS deployment (S3 + CloudFront for
-the SPA, ECS Fargate + ALB + ECR for the API). See the Technical Design
-Document for the full deployment workflow.
+the SPA, ECS Fargate + ALB + ECR for the API, both in the account's default
+VPC). See [infra/README.md](infra/README.md) for the full deploy workflow —
+`terraform apply`, building/pushing the backend Docker image, and syncing
+the frontend build to S3.
