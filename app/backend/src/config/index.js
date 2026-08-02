@@ -6,7 +6,8 @@ const envSchema = z.object({
   DATA_GOV_RESOURCE_ID: z.string().min(1, 'DATA_GOV_RESOURCE_ID is required'),
   CACHE_TTL_SECONDS: z.coerce.number().int().positive().default(3600),
   REQUEST_TIMEOUT_MS: z.coerce.number().int().positive().default(10000),
-  MAX_CONCURRENT_FETCHES: z.coerce.number().int().positive().default(5),
+  MAX_CONCURRENT_FETCHES: z.coerce.number().int().positive().default(3),
+  MAX_RECORDS_PER_QUERY: z.coerce.number().int().positive().default(1000),
   CORS_ORIGIN: z.string().min(1).default('http://localhost:3000'),
   LOG_LEVEL: z
     .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent'])

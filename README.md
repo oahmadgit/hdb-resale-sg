@@ -124,9 +124,21 @@ CORS setup needed locally.
 | `DATA_GOV_RESOURCE_ID` | *(set in `.env.example`)* | data.gov.sg dataset resource ID for resale flat prices |
 | `CACHE_TTL_SECONDS` | `3600` | In-memory cache TTL |
 | `REQUEST_TIMEOUT_MS` | `10000` | Timeout for data.gov.sg API calls |
-| `MAX_CONCURRENT_FETCHES` | `5` | Max parallel pages fetched from data.gov.sg |
+| `MAX_CONCURRENT_FETCHES` | `3` | Max parallel pages fetched from data.gov.sg per batch |
+| `MAX_RECORDS_PER_QUERY` | `1000` | Cap on records fetched per unique filter combination (see note below) |
 | `CORS_ORIGIN` | `http://localhost:3000` | Allowed CORS origin |
 | `LOG_LEVEL` | `info` | pino log level |
+
+**Note on data.gov.sg rate limiting**: the public API enforces a strict rate
+limit (observed: a handful of requests before a `429`, clearing after
+20-30+ seconds). The resale data service retries 429s with exponential
+backoff, throttles between fetch batches, and caps how many records it
+pulls per unique filter combination (`MAX_RECORDS_PER_QUERY`) rather than
+fetching an entire town's full history up front — this keeps requests fast
+and reliable at the cost of results being a bounded recent sample instead
+of the complete dataset for very large towns/flat-type combinations.
+Results are cached for `CACHE_TTL_SECONDS`, so this cost is paid once per
+filter combination, not per request.
 
 ## Running tests
 

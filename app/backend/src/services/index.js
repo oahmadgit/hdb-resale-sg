@@ -12,6 +12,7 @@ function createServices(config) {
     cache,
     resourceId: config.DATA_GOV_RESOURCE_ID,
     maxConcurrentFetches: config.MAX_CONCURRENT_FETCHES,
+    maxRecords: config.MAX_RECORDS_PER_QUERY,
   });
 
   const affordabilityService = createAffordabilityService({ resaleService });
