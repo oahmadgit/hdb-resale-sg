@@ -1,8 +1,5 @@
 # Infrastructure (Terraform)
 
-Provisions the AWS production deployment described in the Technical Design
-Document §8:
-
 - **Frontend** — S3 (private bucket) + CloudFront (Origin Access Control,
   SPA-friendly 404/403 → `index.html` rewrite).
 - **Backend** — ECR repository, ECS Fargate service + task definition, an
@@ -123,7 +120,7 @@ Override any of these with `-var` or a `*.tfvars` file (already gitignored).
 
 ## Known limitations
 
-Mirrors TDD §11: single-region, no autoscaling policy (desired count is
+Mirrors TDD: single-region, no autoscaling policy (desired count is
 static), no custom domain/Route 53 (CloudFront's default `*.cloudfront.net`
 domain is used), and the default VPC's public subnets are used directly
 rather than provisioning a private-subnet + NAT topology.

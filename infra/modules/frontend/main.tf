@@ -2,10 +2,7 @@ locals {
   name = "${var.project_name}-${var.environment}-frontend"
 }
 
-# ---------------------------------------------------------------------------
-# S3 — private bucket, no public access; all reads go through CloudFront OAC.
-# ---------------------------------------------------------------------------
-
+# Private bucket, no public access — all reads go through CloudFront OAC.
 resource "aws_s3_bucket" "site" {
   bucket = local.name
 }
@@ -27,10 +24,7 @@ resource "aws_s3_bucket_versioning" "site" {
   }
 }
 
-# ---------------------------------------------------------------------------
-# CloudFront — Origin Access Control restricts the S3 origin to CloudFront only.
-# ---------------------------------------------------------------------------
-
+# OAC restricts the S3 origin to CloudFront only.
 resource "aws_cloudfront_origin_access_control" "site" {
   name                              = "${local.name}-oac"
   origin_access_control_origin_type = "s3"
@@ -64,8 +58,7 @@ resource "aws_cloudfront_distribution" "site" {
     }
   }
 
-  # React Router client-side routing — any unknown path falls back to
-  # index.html so the SPA router can handle it, rather than a raw S3 404.
+  # Unknown paths fall back to index.html so React Router can handle them client-side.
   custom_error_response {
     error_code         = 404
     response_code      = 200

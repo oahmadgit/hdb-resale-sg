@@ -16,9 +16,7 @@ import YearRangeSelect, { MAX_YEAR_SPAN } from './YearRangeSelect';
 import { useTheme } from '../../hooks/useTheme';
 import { formatCurrency, formatCompactCurrency, formatMonth } from '../../utils/formatters';
 
-// Validated categorical slots (blue, orange, aqua) — see dataviz skill palette.
-// This ordering clears CVD + normal-vision separation for up to 3 concurrent series;
-// lightened variants keep the same hues legible against a dark chart surface.
+// Validated CVD-safe categorical palette; dark variants stay legible on a dark surface.
 const LINE_COLORS = ['#2a78d6', '#eb6834', '#1baf7a'];
 const LINE_COLORS_DARK = ['#5b9beb', '#f3946b', '#4ecfa0'];
 
@@ -56,8 +54,7 @@ export function filterByYearRange(chartData, fromYear, toYear) {
 function ChartTooltip({ active, payload, label }) {
   if (!active || !payload || payload.length === 0) return null;
 
-  // Area + Line share a dataKey per town; keep only the Line entry (identified by
-  // its non-zero stroke) so each town appears once instead of twice.
+  // Area and Line share a dataKey per town; keep only the Line entry so each town appears once.
   const seen = new Set();
   const lineEntries = payload.filter((entry) => {
     if (entry.stroke === 'none' || seen.has(entry.dataKey)) return false;
