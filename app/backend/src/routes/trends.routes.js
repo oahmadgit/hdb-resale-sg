@@ -1,10 +1,14 @@
 const { Router } = require('express');
 
-const router = Router();
+const { validateQuery } = require('../middleware/validate');
+const { trendsQuerySchema } = require('./schemas');
 
-// Controller wired up in Phase 3.
-router.get('/', (_req, res) => {
-  res.status(501).json({ error: { message: 'Not implemented yet', code: 'NOT_IMPLEMENTED' } });
-});
+function createTrendsRouter({ trendsController }) {
+  const router = Router();
 
-module.exports = router;
+  router.get('/', validateQuery(trendsQuerySchema), trendsController.getTrends);
+
+  return router;
+}
+
+module.exports = { createTrendsRouter };

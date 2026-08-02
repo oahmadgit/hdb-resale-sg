@@ -148,8 +148,8 @@ All endpoints are mounted under `/api`.
 | Endpoint | Description |
 |---|---|
 | `GET /api/health` | Service status — used as the ALB health check in production |
-| `GET /api/affordability` | Affordability verdict, mortgage breakdown, grant eligibility, and comparable transactions. Query params: `income`, `savings`, `towns` (comma-separated), `flatType` (required); `tenure`, `rate` (optional) |
-| `GET /api/trends` | Median price trend series and KPI summary. Query params: `towns`, `flatType`, `from`, `to`, `storeyRange` (all optional) |
+| `GET /api/affordability` | Affordability verdict, mortgage breakdown, grant eligibility, and comparable transactions. Query params: `income`, `savings`, `towns` (comma-separated), `flatType` (required); `tenure`, `rate` (optional). `savings` above the 20% minimum downpayment reduces the loan amount. |
+| `GET /api/trends` | Median price trend series and KPI summary. Query params: `towns`, `flatType`, `from`, `to`, `storeyRange` (all optional, `from`/`to` in `YYYY-MM` format) |
 
 All errors return a consistent shape: `{ "error": { "message": "...", "code": "INVALID_PARAMS" | "UPSTREAM_ERROR" | "INTERNAL_ERROR" } }`.
 

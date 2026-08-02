@@ -1,10 +1,18 @@
 const { Router } = require('express');
 
-const router = Router();
+const { validateQuery } = require('../middleware/validate');
+const { affordabilityQuerySchema } = require('./schemas');
 
-// Controller wired up in Phase 3.
-router.get('/', (_req, res) => {
-  res.status(501).json({ error: { message: 'Not implemented yet', code: 'NOT_IMPLEMENTED' } });
-});
+function createAffordabilityRouter({ affordabilityController }) {
+  const router = Router();
 
-module.exports = router;
+  router.get(
+    '/',
+    validateQuery(affordabilityQuerySchema),
+    affordabilityController.getAffordability
+  );
+
+  return router;
+}
+
+module.exports = { createAffordabilityRouter };

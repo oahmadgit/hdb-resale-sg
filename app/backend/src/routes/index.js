@@ -1,13 +1,17 @@
 const { Router } = require('express');
 
 const healthRoutes = require('./health.routes');
-const affordabilityRoutes = require('./affordability.routes');
-const trendsRoutes = require('./trends.routes');
+const { createAffordabilityRouter } = require('./affordability.routes');
+const { createTrendsRouter } = require('./trends.routes');
 
-const router = Router();
+function createRoutes({ affordabilityController, trendsController }) {
+  const router = Router();
 
-router.use('/health', healthRoutes);
-router.use('/affordability', affordabilityRoutes);
-router.use('/trends', trendsRoutes);
+  router.use('/health', healthRoutes);
+  router.use('/affordability', createAffordabilityRouter({ affordabilityController }));
+  router.use('/trends', createTrendsRouter({ trendsController }));
 
-module.exports = router;
+  return router;
+}
+
+module.exports = { createRoutes };
