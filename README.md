@@ -15,9 +15,6 @@ the [data.gov.sg Resale Flat Prices](https://data.gov.sg/collections/189/view) d
 [data.gov.sg API] → API (app/backend) → cache → Client (app/frontend)
 ```
 
-See [HDB_Resale_Technical_Design_Document.pdf](./HDB_Resale_Technical_Design_Document.pdf)
-for the full design rationale, API contracts, data flow, and trade-offs.
-
 ## Stack
 
 - **Backend**: Node.js + Express, `axios` (data.gov.sg fetching), `node-cache`
