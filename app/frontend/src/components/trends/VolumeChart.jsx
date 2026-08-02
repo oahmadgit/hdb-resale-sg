@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import Card from '../ui/Card';
+import YearRangeSelect, { MAX_YEAR_SPAN } from './YearRangeSelect';
+import { getAvailableYears, filterByYearRange } from './PriceTrendChart';
 import { formatMonth } from '../../utils/formatters';
 
 export function aggregateVolumeByMonth(series) {
@@ -20,6 +22,11 @@ export function aggregateVolumeByMonth(series) {
 function VolumeChart({ series }) {
   const [hovered, setHovered] = useState(null);
 
+  const fullChartData = useMemo(() => aggregateVolumeByMonth(series), [series]);
+  const years = useMemo(() => getAvailableYears(fullChartData), [fullChartData]);
+
+  const [yearRange, setYearRange] = useState(null);
+
   if (series.length === 0) {
     return (
       <Card className="flex h-full items-center justify-center">
@@ -28,15 +35,31 @@ function VolumeChart({ series }) {
     );
   }
 
-  const chartData = aggregateVolumeByMonth(series);
+  const fromYear = yearRange?.fromYear ?? Math.max(years[years.length - 1] - (MAX_YEAR_SPAN - 1), years[0] ?? 0);
+  const toYear = yearRange?.toYear ?? years[years.length - 1] ?? 0;
+
+  const chartData = filterByYearRange(fullChartData, fromYear, toYear);
+
+  if (chartData.length === 0) {
+    return (
+      <Card className="flex h-full items-center justify-center">
+        <p className="text-sm text-slate-500">No data in the selected year range.</p>
+      </Card>
+    );
+  }
+
   const maxCount = Math.max(...chartData.map((d) => d.count), 1);
   const total = chartData.reduce((sum, d) => sum + d.count, 0);
   const active = hovered ?? chartData[chartData.length - 1];
 
   return (
     <Card className="flex h-full flex-col">
-      <div className="mb-4 flex items-baseline justify-between">
+      <div className="mb-2 flex items-center justify-between gap-3">
         <h3 className="font-semibold text-slate-900">Transaction volume</h3>
+        <YearRangeSelect years={years} fromYear={fromYear} toYear={toYear} onChange={setYearRange} />
+      </div>
+      <div className="mb-2 flex items-baseline justify-between">
+        <span />
         <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">
           {total.toLocaleString()} total
         </span>

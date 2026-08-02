@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react';
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -11,6 +12,7 @@ import {
 } from 'recharts';
 
 import Card from '../ui/Card';
+import YearRangeSelect, { MAX_YEAR_SPAN } from './YearRangeSelect';
 import { formatCurrency, formatMonth } from '../../utils/formatters';
 
 // Validated categorical slots (blue, orange, aqua) — see dataviz skill palette.
@@ -34,6 +36,18 @@ export function mergeSeriesByMonth(series) {
   }
 
   return Array.from(byMonth.values()).sort((a, b) => (a.month < b.month ? -1 : 1));
+}
+
+export function getAvailableYears(chartData) {
+  const years = new Set(chartData.map((point) => Number(point.month.split('-')[0])));
+  return Array.from(years).sort((a, b) => a - b);
+}
+
+export function filterByYearRange(chartData, fromYear, toYear) {
+  return chartData.filter((point) => {
+    const year = Number(point.month.split('-')[0]);
+    return year >= fromYear && year <= toYear;
+  });
 }
 
 function ChartTooltip({ active, payload, label }) {
@@ -79,6 +93,17 @@ function EndLabel({ x, y, index, data, town, color }) {
 }
 
 function PriceTrendChart({ series }) {
+  const fullChartData = useMemo(() => mergeSeriesByMonth(series), [series]);
+  const years = useMemo(() => getAvailableYears(fullChartData), [fullChartData]);
+
+  const [yearRange, setYearRange] = useState(null);
+  const [hiddenTowns, setHiddenTowns] = useState(() => new Set());
+
+  const fromYear = yearRange?.fromYear ?? Math.max(years[years.length - 1] - (MAX_YEAR_SPAN - 1), years[0] ?? 0);
+  const toYear = yearRange?.toYear ?? years[years.length - 1] ?? 0;
+
+  const visibleSeries = series.filter(({ town }) => !hiddenTowns.has(town));
+
   if (series.length === 0) {
     return (
       <Card className="flex h-full items-center justify-center">
@@ -87,14 +112,34 @@ function PriceTrendChart({ series }) {
     );
   }
 
-  const chartData = mergeSeriesByMonth(series);
+  const chartData = filterByYearRange(fullChartData, fromYear, toYear);
   const showLegend = series.length > 1;
   const longestTownLength = Math.max(...series.map(({ town }) => town.length));
   const rightMargin = showLegend ? 12 : longestTownLength * 7 + 16;
 
+  function handleLegendClick({ value: town }) {
+    setHiddenTowns((prev) => {
+      const next = new Set(prev);
+      if (next.has(town)) {
+        next.delete(town);
+      } else {
+        next.add(town);
+      }
+      return next;
+    });
+  }
+
   return (
     <Card className="flex h-full flex-col">
-      <h3 className="mb-2 font-semibold text-slate-900">Average price trend</h3>
+      <div className="mb-2 flex items-center justify-between gap-3">
+        <h3 className="font-semibold text-slate-900">Average price trend</h3>
+        <YearRangeSelect
+          years={years}
+          fromYear={fromYear}
+          toYear={toYear}
+          onChange={setYearRange}
+        />
+      </div>
       <ResponsiveContainer width="100%" height={320}>
         <ComposedChart data={chartData} margin={{ top: 8, right: rightMargin, left: 0, bottom: 0 }}>
           <defs>
@@ -124,8 +169,17 @@ function PriceTrendChart({ series }) {
             width={80}
           />
           <Tooltip content={<ChartTooltip />} cursor={{ stroke: '#c3c2b7', strokeWidth: 1 }} />
-          {showLegend && <Legend wrapperStyle={{ fontSize: 12 }} iconType="plainline" />}
-          {series.map(({ town }) => {
+          {showLegend && (
+            <Legend
+              wrapperStyle={{ fontSize: 12, cursor: 'pointer' }}
+              iconType="plainline"
+              onClick={handleLegendClick}
+              formatter={(value) => (
+                <span style={{ opacity: hiddenTowns.has(value) ? 0.4 : 1 }}>{value}</span>
+              )}
+            />
+          )}
+          {visibleSeries.map(({ town }) => {
             return (
               <Area
                 key={`area-${town}`}
@@ -151,9 +205,10 @@ function PriceTrendChart({ series }) {
                 strokeWidth={2}
                 connectNulls
                 dot={false}
+                hide={hiddenTowns.has(town)}
                 activeDot={{ r: 4, stroke: '#fcfcfb', strokeWidth: 2 }}
                 label={
-                  showLegend
+                  showLegend || hiddenTowns.has(town)
                     ? undefined
                     : (props) => <EndLabel {...props} data={chartData} town={town} color={color} />
                 }
