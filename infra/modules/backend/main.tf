@@ -2,10 +2,6 @@ locals {
   name = "${var.project_name}-${var.environment}"
 }
 
-# ---------------------------------------------------------------------------
-# Networking — use the account's default VPC and its subnets.
-# ---------------------------------------------------------------------------
-
 data "aws_vpc" "default" {
   default = true
 }
@@ -16,10 +12,6 @@ data "aws_subnets" "default" {
     values = [data.aws_vpc.default.id]
   }
 }
-
-# ---------------------------------------------------------------------------
-# ECR — container image registry
-# ---------------------------------------------------------------------------
 
 resource "aws_ecr_repository" "backend" {
   name                 = "${local.name}-backend"
@@ -48,10 +40,6 @@ resource "aws_ecr_lifecycle_policy" "backend" {
     ]
   })
 }
-
-# ---------------------------------------------------------------------------
-# Security groups
-# ---------------------------------------------------------------------------
 
 resource "aws_security_group" "alb" {
   name        = "${local.name}-alb"
@@ -96,10 +84,6 @@ resource "aws_security_group" "ecs" {
   }
 }
 
-# ---------------------------------------------------------------------------
-# ALB
-# ---------------------------------------------------------------------------
-
 resource "aws_lb" "backend" {
   name               = "${local.name}-alb"
   internal           = false
@@ -137,18 +121,10 @@ resource "aws_lb_listener" "backend_http" {
   }
 }
 
-# ---------------------------------------------------------------------------
-# CloudWatch logs
-# ---------------------------------------------------------------------------
-
 resource "aws_cloudwatch_log_group" "backend" {
   name              = "/ecs/${local.name}-backend"
   retention_in_days = 14
 }
-
-# ---------------------------------------------------------------------------
-# IAM — task execution role (pull image, write logs)
-# ---------------------------------------------------------------------------
 
 data "aws_iam_policy_document" "ecs_assume_role" {
   statement {
@@ -174,10 +150,6 @@ resource "aws_iam_role" "ecs_task" {
   name               = "${local.name}-ecs-task"
   assume_role_policy = data.aws_iam_policy_document.ecs_assume_role.json
 }
-
-# ---------------------------------------------------------------------------
-# ECS cluster, task definition, service
-# ---------------------------------------------------------------------------
 
 resource "aws_ecs_cluster" "this" {
   name = "${local.name}-cluster"
