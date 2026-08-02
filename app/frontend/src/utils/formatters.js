@@ -25,6 +25,13 @@ export function formatCurrency(value) {
   return currencyFormatter.format(value);
 }
 
+export function formatCompactCurrency(value) {
+  if (value === null || value === undefined) return '—';
+  if (Math.abs(value) >= 1_000_000) return `$${(value / 1_000_000).toFixed(1)}M`;
+  if (Math.abs(value) >= 1_000) return `$${Math.round(value / 1_000)}k`;
+  return `$${value}`;
+}
+
 export function formatPercent(value) {
   if (value === null || value === undefined) return '—';
   return `${(value * 100).toFixed(1)}%`;

@@ -13,7 +13,7 @@ import {
 
 import Card from '../ui/Card';
 import YearRangeSelect, { MAX_YEAR_SPAN } from './YearRangeSelect';
-import { formatCurrency, formatMonth } from '../../utils/formatters';
+import { formatCurrency, formatCompactCurrency, formatMonth } from '../../utils/formatters';
 
 // Validated categorical slots (blue, orange, aqua) — see dataviz skill palette.
 // This ordering clears CVD + normal-vision separation for up to 3 concurrent series.
@@ -83,15 +83,6 @@ function ChartTooltip({ active, payload, label }) {
   );
 }
 
-function EndLabel({ x, y, index, data, town, color }) {
-  if (index !== data.length - 1) return null;
-  return (
-    <text x={x + 8} y={y} dy={4} fontSize={12} fontWeight={600} fill={color}>
-      {town}
-    </text>
-  );
-}
-
 function PriceTrendChart({ series }) {
   const fullChartData = useMemo(() => mergeSeriesByMonth(series), [series]);
   const years = useMemo(() => getAvailableYears(fullChartData), [fullChartData]);
@@ -113,9 +104,6 @@ function PriceTrendChart({ series }) {
   }
 
   const chartData = filterByYearRange(fullChartData, fromYear, toYear);
-  const showLegend = series.length > 1;
-  const longestTownLength = Math.max(...series.map(({ town }) => town.length));
-  const rightMargin = showLegend ? 12 : longestTownLength * 7 + 16;
 
   function handleLegendClick({ value: town }) {
     setHiddenTowns((prev) => {
@@ -141,7 +129,7 @@ function PriceTrendChart({ series }) {
         />
       </div>
       <ResponsiveContainer width="100%" height={320}>
-        <ComposedChart data={chartData} margin={{ top: 8, right: rightMargin, left: 0, bottom: 0 }}>
+        <ComposedChart data={chartData} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
           <defs>
             {series.map(({ town }, index) => {
               const color = LINE_COLORS[index % LINE_COLORS.length];
@@ -162,23 +150,27 @@ function PriceTrendChart({ series }) {
             tickLine={false}
           />
           <YAxis
-            tickFormatter={formatCurrency}
+            tickFormatter={formatCompactCurrency}
             tick={{ fontSize: 12, fill: '#898781' }}
             stroke="#c3c2b7"
             tickLine={false}
-            width={80}
+            width={48}
           />
           <Tooltip content={<ChartTooltip />} cursor={{ stroke: '#c3c2b7', strokeWidth: 1 }} />
-          {showLegend && (
-            <Legend
-              wrapperStyle={{ fontSize: 12, cursor: 'pointer' }}
-              iconType="plainline"
-              onClick={handleLegendClick}
-              formatter={(value) => (
-                <span style={{ opacity: hiddenTowns.has(value) ? 0.4 : 1 }}>{value}</span>
-              )}
-            />
-          )}
+          <Legend
+            wrapperStyle={{ fontSize: 12, cursor: 'pointer' }}
+            iconType="plainline"
+            onClick={handleLegendClick}
+            payload={series.map(({ town }, index) => ({
+              value: town,
+              type: 'plainline',
+              color: LINE_COLORS[index % LINE_COLORS.length],
+              payload: { strokeDasharray: 0 },
+            }))}
+            formatter={(value) => (
+              <span style={{ opacity: hiddenTowns.has(value) ? 0.4 : 1 }}>{value}</span>
+            )}
+          />
           {visibleSeries.map(({ town }) => {
             return (
               <Area
@@ -207,11 +199,6 @@ function PriceTrendChart({ series }) {
                 dot={false}
                 hide={hiddenTowns.has(town)}
                 activeDot={{ r: 4, stroke: '#fcfcfb', strokeWidth: 2 }}
-                label={
-                  showLegend || hiddenTowns.has(town)
-                    ? undefined
-                    : (props) => <EndLabel {...props} data={chartData} town={town} color={color} />
-                }
               />
             );
           })}
