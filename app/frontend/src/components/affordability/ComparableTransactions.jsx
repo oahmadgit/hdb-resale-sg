@@ -3,14 +3,14 @@ import { formatCurrency, formatMonth } from '../../utils/formatters';
 
 function ComparableTransactions({ comparables }) {
   return (
-    <Card>
-      <h3 className="mb-1 text-lg font-bold text-slate-900">Comparable transactions</h3>
+    <Card className="flex max-h-[36rem] flex-col overflow-hidden p-0">
+      <h3 className="px-5 pb-1 pt-5 text-lg font-bold text-slate-900">Comparable transactions</h3>
       {comparables.length === 0 ? (
-        <p className="text-sm text-slate-500">No comparable transactions found.</p>
+        <p className="px-5 pb-5 text-sm text-slate-500">No comparable transactions found.</p>
       ) : (
-        <div className="mt-2 overflow-x-auto">
+        <div className="min-h-0 flex-1 overflow-auto px-5 pb-5">
           <table className="w-full text-left text-sm">
-            <thead>
+            <thead className="sticky top-0 z-10 bg-white">
               <tr className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-400">
                 <th className="py-2 pr-3 font-semibold">Month</th>
                 <th className="py-2 pr-3 font-semibold">Town</th>

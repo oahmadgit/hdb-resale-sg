@@ -54,7 +54,7 @@ describe('mergeSeriesByMonth', () => {
 describe('PriceTrendChart', () => {
   it('renders without crashing and includes the chart title', () => {
     render(<PriceTrendChart series={series} />);
-    expect(screen.getByText('Median price trend')).toBeInTheDocument();
+    expect(screen.getByText('Average price trend')).toBeInTheDocument();
   });
 
   it('shows an empty state when the series is empty', () => {

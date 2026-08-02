@@ -1,14 +1,46 @@
-import Badge from '../ui/Badge';
-
 const VERDICT_CONFIG = {
-  affordable: { tone: 'success', label: 'Affordable' },
-  borderline: { tone: 'warning', label: 'Borderline' },
-  unaffordable: { tone: 'danger', label: 'Unaffordable' },
+  affordable: {
+    tone: 'bg-green-50 text-green-800 ring-1 ring-inset ring-green-200',
+    icon: '🎉',
+    label: 'Affordable',
+    message: "You're in great shape — this home fits comfortably within your budget.",
+  },
+  borderline: {
+    tone: 'bg-amber-50 text-amber-800 ring-1 ring-inset ring-amber-200',
+    icon: '⚖️',
+    label: 'Borderline',
+    message: "It's a stretch, but within reach — a bit more savings would ease the squeeze.",
+  },
+  unaffordable: {
+    tone: 'bg-red-50 text-red-800 ring-1 ring-inset ring-red-200',
+    icon: '⚠️',
+    label: 'Unaffordable',
+    message: 'This one may be out of reach for now — consider a smaller flat type or a different town.',
+  },
 };
 
 function VerdictBadge({ verdict }) {
-  const config = VERDICT_CONFIG[verdict] ?? { tone: 'neutral', label: verdict };
-  return <Badge tone={config.tone}>{config.label}</Badge>;
+  const config = VERDICT_CONFIG[verdict] ?? {
+    tone: 'bg-slate-100 text-slate-700 ring-1 ring-inset ring-slate-200',
+    icon: 'ℹ️',
+    label: verdict,
+    message: '',
+  };
+
+  return (
+    <div
+      data-testid="verdict-banner"
+      className={`flex items-center gap-3 rounded-2xl px-5 py-4 ${config.tone}`}
+    >
+      <span className="text-2xl" aria-hidden="true">
+        {config.icon}
+      </span>
+      <div className="flex flex-col">
+        <span className="text-xs font-bold uppercase tracking-wide">{config.label}</span>
+        <span className="text-sm font-semibold">{config.message}</span>
+      </div>
+    </div>
+  );
 }
 
 export default VerdictBadge;

@@ -91,25 +91,28 @@ function PropertyExplorerPage() {
           )}
 
           {affordability.isSuccess ? (
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              <div className="flex flex-col gap-6">
-                <VerdictBadge verdict={affordability.data.verdict} />
-                <MortgageBreakdown
-                  medianPrice={affordability.data.medianPrice}
-                  downpaymentRequired={affordability.data.downpaymentRequired}
-                  loanAmount={affordability.data.loanAmount}
-                  monthlyMortgage={affordability.data.monthlyMortgage}
-                  mortgageToIncomeRatio={affordability.data.mortgageToIncomeRatio}
-                />
-                <GrantEligibility
-                  eligible={affordability.data.grantEligibility.eligible}
-                  grantAmount={affordability.data.grantEligibility.grantAmount}
-                  effectiveLoanAmount={affordability.data.grantEligibility.effectiveLoanAmount}
-                />
-              </div>
+            <div className="flex flex-col gap-6">
+              <VerdictBadge verdict={affordability.data.verdict} />
 
-              <div className="max-h-[36rem] overflow-y-auto pr-1 lg:sticky lg:top-40">
-                <ComparableTransactions comparables={affordability.data.comparables} />
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <div className="flex flex-col gap-6">
+                  <MortgageBreakdown
+                    medianPrice={affordability.data.medianPrice}
+                    downpaymentRequired={affordability.data.downpaymentRequired}
+                    loanAmount={affordability.data.loanAmount}
+                    monthlyMortgage={affordability.data.monthlyMortgage}
+                    mortgageToIncomeRatio={affordability.data.mortgageToIncomeRatio}
+                  />
+                  <GrantEligibility
+                    eligible={affordability.data.grantEligibility.eligible}
+                    grantAmount={affordability.data.grantEligibility.grantAmount}
+                    effectiveLoanAmount={affordability.data.grantEligibility.effectiveLoanAmount}
+                  />
+                </div>
+
+                <div className="lg:sticky lg:top-40">
+                  <ComparableTransactions comparables={affordability.data.comparables} />
+                </div>
               </div>
             </div>
           ) : (

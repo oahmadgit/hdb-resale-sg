@@ -1,4 +1,5 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, it, expect } from 'vitest';
 
 import VolumeChart, { aggregateVolumeByMonth } from '../../src/components/trends/VolumeChart';
@@ -42,5 +43,26 @@ describe('VolumeChart', () => {
   it('shows an empty state when the series is empty', () => {
     render(<VolumeChart series={[]} />);
     expect(screen.getByText(/no data/i)).toBeInTheDocument();
+  });
+
+  it('shows the total transaction count', () => {
+    render(<VolumeChart series={series} />);
+    expect(screen.getByText('140 total')).toBeInTheDocument();
+  });
+
+  it('defaults the headline figure to the most recent month', () => {
+    render(<VolumeChart series={series} />);
+    const headline = screen.getByText('70').closest('div');
+    expect(within(headline).getByText('Feb 2023')).toBeInTheDocument();
+  });
+
+  it('updates the headline figure when hovering a different bar', async () => {
+    render(<VolumeChart series={series} />);
+
+    const bars = screen.getByRole('img', { name: /monthly transaction volume/i }).children;
+    await userEvent.hover(bars[0]);
+
+    const headline = screen.getByText('70').closest('div');
+    expect(within(headline).getByText('Jan 2023')).toBeInTheDocument();
   });
 });

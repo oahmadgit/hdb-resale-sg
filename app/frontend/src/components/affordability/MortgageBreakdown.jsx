@@ -22,7 +22,7 @@ function MortgageBreakdown({
   return (
     <Card>
       <h3 className="mb-1 text-lg font-bold text-slate-900">Mortgage breakdown</h3>
-      <Row label="Median comparable price" value={formatCurrency(medianPrice)} />
+      <Row label="Average comparable price" value={formatCurrency(medianPrice)} />
       <Row label="Downpayment required" value={formatCurrency(downpaymentRequired)} />
       <Row label="Loan amount" value={formatCurrency(loanAmount)} />
       <Row label="Monthly mortgage" value={formatCurrency(monthlyMortgage)} emphasis />
