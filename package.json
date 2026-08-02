@@ -1,0 +1,20 @@
+{
+  "name": "hdb-resale-sg",
+  "private": true,
+  "workspaces": [
+    "app/backend",
+    "app/frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev -w app/backend\" \"npm run dev -w app/frontend\"",
+    "build": "npm run build -w app/frontend",
+    "test": "npm run test -w app/backend && npm run test -w app/frontend",
+    "lint": "eslint app/*/src --ext .js,.jsx",
+    "format": "prettier --write app/*/src"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "eslint": "^8.57.0",
+    "prettier": "^3.3.3"
+  }
+}
