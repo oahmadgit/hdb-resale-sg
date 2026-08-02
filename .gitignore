@@ -1,0 +1,15 @@
+node_modules/
+dist/
+build/
+coverage/
+.env
+*.local
+.DS_Store
+npm-debug.log*
+
+# Terraform
+infra/.terraform/
+infra/*.tfstate
+infra/*.tfstate.*
+infra/.terraform.lock.hcl
+infra/*.tfvars
